@@ -16,7 +16,7 @@ interface ProductCardProps {
 export default function ProductCard({
   id,
   name,
-  price = "500 points",
+  price = 500,
   image = "/placeholder.svg?height=300&width=300",
 }: ProductCardProps) {
   const router = useRouter()
@@ -58,6 +58,9 @@ export default function ProductCard({
       setIsAddingToCart(false)
     }
   }
+
+  // Format the price display
+  const priceDisplay = typeof price === "number" ? `${price} points` : price
 
   return (
     <motion.div
@@ -106,7 +109,7 @@ export default function ProductCard({
       </div>
       <div className="p-4">
         <h3 className="font-medium text-gray-900">{name}</h3>
-        <p className="text-sm text-gray-500">{typeof price === "number" ? `${price} points` : price}</p>
+        <p className="text-sm text-gray-500">{priceDisplay}</p>
         <div className="mt-3 flex items-center justify-between">
           <span className="text-xs font-medium text-green-600">In stock</span>
           <button

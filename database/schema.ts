@@ -2,7 +2,7 @@ import { relations } from "drizzle-orm"
 import { timestamp, pgTable, text, primaryKey, integer, uuid } from "drizzle-orm/pg-core"
 import type { AdapterAccount } from "next-auth/adapters"
 
-export const users = pgTable("user", {
+export const users = pgTable("users", {
   id: text("id").notNull().primaryKey(),
   name: text("name"),
   email: text("email").notNull().unique(),
@@ -16,7 +16,7 @@ export const users = pgTable("user", {
 })
 
 export const accounts = pgTable(
-  "account",
+  "accounts",
   {
     userId: text("userId")
       .notNull()
@@ -39,7 +39,7 @@ export const accounts = pgTable(
   }),
 )
 
-export const sessions = pgTable("session", {
+export const sessions = pgTable("sessions", {
   sessionToken: text("sessionToken").notNull().primaryKey(),
   userId: text("userId")
     .notNull()
@@ -48,7 +48,7 @@ export const sessions = pgTable("session", {
 })
 
 export const verificationTokens = pgTable(
-  "verificationToken",
+  "verificationTokens",
   {
     identifier: text("identifier").notNull(),
     token: text("token").notNull(),
@@ -59,7 +59,7 @@ export const verificationTokens = pgTable(
   }),
 )
 
-export const products = pgTable("product", {
+export const products = pgTable("products", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
@@ -71,7 +71,7 @@ export const products = pgTable("product", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 })
 
-export const purchases = pgTable("purchase", {
+export const purchases = pgTable("purchases", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: text("userId")
     .notNull()

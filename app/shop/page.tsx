@@ -6,26 +6,20 @@ import ProductCard from "@/components/product-card"
 import Link from "next/link"
 import Image from "next/image"
 import { ShoppingCart, Filter, ArrowRight } from "lucide-react"
-import prisma from "@/lib/db"
+import { db } from "@/database"
 
 export default async function ShopPage() {
   const session = await getServerSession(authOptions)
 
   // Fetch products from the database
-  const trendingProducts = await prisma.product.findMany({
-    take: 3,
-    orderBy: {
-      purchases: {
-        _count: "desc",
-      },
-    },
+  const trendingProducts = await db.query.products.findMany({
+    orderBy: (products, { desc }) => [desc(products.createdAt)],
+    limit: 3,
   })
 
-  const newProducts = await prisma.product.findMany({
-    take: 3,
-    orderBy: {
-      createdAt: "desc",
-    },
+  const newProducts = await db.query.products.findMany({
+    orderBy: (products, { desc }) => [desc(products.createdAt)],
+    limit: 3,
   })
 
   // If no products in database, use these defaults
@@ -87,8 +81,9 @@ export default async function ShopPage() {
                   {(trendingProducts.length > 0 ? trendingProducts : defaultProducts).map((product) => (
                     <ProductCard
                       key={product.id}
+                      id={product.id}
                       name={product.name}
-                      price={`${product.price} points`}
+                      price={product.price}
                       image={product.image || "/placeholder.svg?height=300&width=300"}
                     />
                   ))}
@@ -100,8 +95,9 @@ export default async function ShopPage() {
                   {(newProducts.length > 0 ? newProducts : defaultProducts).map((product) => (
                     <ProductCard
                       key={product.id}
+                      id={product.id}
                       name={product.name}
-                      price={`${product.price} points`}
+                      price={product.price}
                       image={product.image || "/placeholder.svg?height=300&width=300"}
                     />
                   ))}
@@ -110,17 +106,17 @@ export default async function ShopPage() {
 
               <SectionCard title="For You">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  <ProductCard name="Study Lamp" price="1,100 points" />
-                  <ProductCard name="Wireless Charger" price="1,300 points" />
-                  <ProductCard name="Coffee Mug" price="600 points" />
+                  <ProductCard name="Study Lamp" price={1100} />
+                  <ProductCard name="Wireless Charger" price={1300} />
+                  <ProductCard name="Coffee Mug" price={600} />
                 </div>
               </SectionCard>
 
               <SectionCard title="Clothing">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  <ProductCard name="SmartFin T-Shirt" price="1,000 points" />
-                  <ProductCard name="Campus Cap" price="750 points" />
-                  <ProductCard name="Winter Scarf" price="900 points" />
+                  <ProductCard name="SmartFin T-Shirt" price={1000} />
+                  <ProductCard name="Campus Cap" price={750} />
+                  <ProductCard name="Winter Scarf" price={900} />
                 </div>
               </SectionCard>
             </div>

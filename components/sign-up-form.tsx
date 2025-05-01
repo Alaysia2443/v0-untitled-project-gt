@@ -65,6 +65,7 @@ export default function SignUpForm() {
     }
 
     try {
+      console.log("Registering user...")
       const response = await fetch("/api/register", {
         method: "POST",
         headers: {
@@ -83,6 +84,8 @@ export default function SignUpForm() {
         throw new Error(data.error || "Failed to create account")
       }
 
+      console.log("Registration successful, signing in...")
+
       // Sign in the user
       const result = await signIn("credentials", {
         redirect: false,
@@ -91,16 +94,27 @@ export default function SignUpForm() {
       })
 
       if (result?.error) {
+        console.error("Sign in error:", result.error)
         throw new Error(result.error)
       }
 
       // Redirect to dashboard or home page
+      console.log("Sign in successful, redirecting...")
       router.push("/")
       router.refresh()
     } catch (error: any) {
+      console.error("Registration/login error:", error)
       setError(error.message)
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleSocialSignIn = async (provider: string) => {
+    try {
+      await signIn(provider, { callbackUrl: "/" })
+    } catch (error) {
+      console.error(`Error signing in with ${provider}:`, error)
     }
   }
 
@@ -458,7 +472,8 @@ export default function SignUpForm() {
 
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button
-            onClick={() => signIn("google")}
+            onClick={() => handleSocialSignIn("google")}
+            type="button"
             className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
             <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
@@ -482,7 +497,8 @@ export default function SignUpForm() {
             Google
           </button>
           <button
-            onClick={() => signIn("github")}
+            onClick={() => handleSocialSignIn("github")}
+            type="button"
             className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
             <svg className="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">

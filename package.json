@@ -59,7 +59,6 @@
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
     "@emotion/is-prop-valid": "latest",
-    "prisma": "latest",
     "@auth/core": "latest",
     "nodemailer": "latest",
     "pg": "latest",
@@ -91,12 +90,12 @@
     "@op-engineering/op-sqlite": "latest",
     "framer-motion": "latest",
     "next-auth": "latest",
-    "@auth/drizzle-adapter": "latest",
     "drizzle-orm": "latest",
+    "geist": "latest",
+    "drizzle-kit": "latest",
     "bcryptjs": "latest",
     "nanoid": "latest",
-    "geist": "latest",
-    "drizzle-kit": "latest"
+    "@auth/drizzle-adapter": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

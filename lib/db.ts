@@ -1,9 +1,3 @@
-import { PrismaClient } from "@prisma/client"
-
-const globalForPrisma = global as unknown as { prisma: PrismaClient }
-
-export const prisma = globalForPrisma.prisma || new PrismaClient()
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
-
-export default prisma
+// This file is no longer needed as we're using Drizzle
+// We'll keep it empty to avoid breaking imports, but it should be removed later
+export {}

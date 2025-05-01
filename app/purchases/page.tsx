@@ -2,7 +2,8 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import PageHeader from "@/components/page-header"
-import prisma from "@/lib/db"
+import { db, eq } from "@/database"
+import { purchases } from "@/database/schema"
 import { ShoppingBag, Download } from "lucide-react"
 
 export default async function PurchasesPage() {
@@ -13,14 +14,12 @@ export default async function PurchasesPage() {
   }
 
   // Get all user purchases
-  const purchases = await prisma.purchase.findMany({
-    where: { userId: session.user.id },
-    include: {
+  const userPurchases = await db.query.purchases.findMany({
+    where: eq(purchases.userId, session.user.id),
+    with: {
       product: true,
     },
-    orderBy: {
-      createdAt: "desc",
-    },
+    orderBy: (purchases, { desc }) => [desc(purchases.createdAt)],
   })
 
   return (
@@ -38,7 +37,7 @@ export default async function PurchasesPage() {
           </div>
         </div>
 
-        {purchases.length > 0 ? (
+        {userPurchases.length > 0 ? (
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -70,7 +69,7 @@ export default async function PurchasesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {purchases.map((purchase) => (
+                {userPurchases.map((purchase) => (
                   <tr key={purchase.id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex items-center">

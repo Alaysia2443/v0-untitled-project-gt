@@ -2,7 +2,8 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import PageHeader from "@/components/page-header"
-import prisma from "@/lib/db"
+import { db, eq } from "@/database"
+import { users, purchases } from "@/database/schema"
 import { CreditCard, ShoppingBag, Calendar } from "lucide-react"
 
 export default async function ProfilePage() {
@@ -12,26 +13,31 @@ export default async function ProfilePage() {
     redirect("/signin?callbackUrl=/profile")
   }
 
-  // Get user with purchase count
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    include: {
-      _count: {
-        select: { purchases: true },
-      },
-    },
+  // Get user
+  const user = await db.query.users.findFirst({
+    where: eq(users.id, session.user.id),
   })
 
+  if (!user) {
+    redirect("/signin")
+  }
+
+  // Count purchases
+  const purchaseCountResult = await db
+    .select({ count: { value: purchases.id } })
+    .from(purchases)
+    .where(eq(purchases.userId, session.user.id))
+
+  const purchaseCount = purchaseCountResult[0]?.count?.value || 0
+
   // Get recent purchases
-  const recentPurchases = await prisma.purchase.findMany({
-    where: { userId: session.user.id },
-    include: {
+  const recentPurchases = await db.query.purchases.findMany({
+    where: eq(purchases.userId, session.user.id),
+    with: {
       product: true,
     },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 3,
+    orderBy: (purchases, { desc }) => [desc(purchases.createdAt)],
+    limit: 3,
   })
 
   return (
@@ -74,7 +80,7 @@ export default async function ProfilePage() {
                     <ShoppingBag className="mr-3 h-5 w-5 text-green-600" />
                     <span className="font-medium">Total Purchases</span>
                   </div>
-                  <span className="text-lg font-bold">{user?._count.purchases || 0}</span>
+                  <span className="text-lg font-bold">{purchaseCount}</span>
                 </div>
 
                 <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4">

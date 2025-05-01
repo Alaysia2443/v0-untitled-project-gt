@@ -25,26 +25,34 @@ export async function POST(request: Request) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10)
 
-    // Create user
+    // Create user with nanoid for ID
     const userId = nanoid()
-    const newUser = await db
-      .insert(users)
-      .values({
-        id: userId,
-        name,
-        email,
-        password: hashedPassword,
-        points: 1000, // Starting points for new users
-      })
-      .returning({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        points: users.points,
-      })
+
+    // Insert user directly without returning to avoid potential issues
+    await db.insert(users).values({
+      id: userId,
+      name,
+      email,
+      password: hashedPassword,
+      points: 1000, // Starting points for new users
+      role: "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+
+    // Fetch the created user to return in response
+    const newUser = await db.query.users.findFirst({
+      where: (users, { eq }) => eq(users.id, userId),
+      columns: {
+        id: true,
+        name: true,
+        email: true,
+        points: true,
+      },
+    })
 
     return NextResponse.json({
-      user: newUser[0],
+      user: newUser,
       message: "User registered successfully",
     })
   } catch (error) {
