@@ -4,11 +4,15 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X } from "lucide-react"
+import { useSession, signOut } from "next-auth/react"
+import { Menu, X, User, LogOut, ShoppingBag } from "lucide-react"
+import UserPointsDisplay from "./user-points-display"
 
 export default function Navbar() {
+  const { data: session } = useSession()
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,12 +38,59 @@ export default function Navbar() {
           <NavLink href="/features">Features</NavLink>
           <NavLink href="/shop">Shop</NavLink>
           <NavLink href="/about">About</NavLink>
-          <Link
-            href="/signin"
-            className="ml-2 rounded-full bg-green-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
-          >
-            Sign in
-          </Link>
+
+          {session ? (
+            <>
+              <UserPointsDisplay />
+              <div className="relative ml-2">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center rounded-full border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                >
+                  <span className="mr-1">{session.user.name?.split(" ")[0] || "User"}</span>
+                  <User className="h-4 w-4" />
+                </button>
+
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <User className="mr-2 inline h-4 w-4" />
+                      Profile
+                    </Link>
+                    <Link
+                      href="/purchases"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <ShoppingBag className="mr-2 inline h-4 w-4" />
+                      My Purchases
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setUserMenuOpen(false)
+                        signOut({ callbackUrl: "/" })
+                      }}
+                      className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      <LogOut className="mr-2 inline h-4 w-4" />
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <Link
+              href="/signin"
+              className="ml-2 rounded-full bg-green-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+            >
+              Sign in
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -65,13 +116,40 @@ export default function Navbar() {
             <MobileNavLink href="/about" onClick={() => setMobileMenuOpen(false)}>
               About
             </MobileNavLink>
-            <Link
-              href="/signin"
-              className="mt-2 rounded-full bg-green-600 px-5 py-2.5 text-center font-medium text-white transition-colors hover:bg-green-700"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Sign in
-            </Link>
+
+            {session ? (
+              <>
+                <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+                  <UserPointsDisplay />
+                </div>
+                <MobileNavLink href="/profile" onClick={() => setMobileMenuOpen(false)}>
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </MobileNavLink>
+                <MobileNavLink href="/purchases" onClick={() => setMobileMenuOpen(false)}>
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  My Purchases
+                </MobileNavLink>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false)
+                    signOut({ callbackUrl: "/" })
+                  }}
+                  className="flex w-full items-center rounded-md px-4 py-2 text-left text-base font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/signin"
+                className="mt-2 rounded-full bg-green-600 px-5 py-2.5 text-center font-medium text-white transition-colors hover:bg-green-700"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Sign in
+              </Link>
+            )}
           </nav>
         </div>
       )}
@@ -102,7 +180,7 @@ function MobileNavLink({
   return (
     <Link
       href={href}
-      className="block rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+      className="flex items-center rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
       onClick={onClick}
     >
       {children}

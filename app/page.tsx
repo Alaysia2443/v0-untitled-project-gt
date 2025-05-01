@@ -5,12 +5,9 @@ import { ArrowRight, CreditCard, TrendingUp, BookOpen, Users } from "lucide-reac
 export default function Home() {
   return (
     <main>
-    <section className="relative overflow-hidden py-24">
-    <img
-      src="/image1.png"
-      alt="Background"
-      className="absolute inset-0 h-full w-full object-cover grayscale opacity-20 pointer-events-none"
-    />
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-white to-gray-50">
+        <div className="absolute inset-0 bg-[url('/placeholder.svg?height=800&width=1920')] bg-cover bg-fixed bg-center opacity-5"></div>
         <div className="container mx-auto px-4 py-16 md:px-6 md:py-24 lg:py-32">
           <div className="grid items-center gap-12 md:grid-cols-2">
             <div className="max-w-xl">
@@ -37,21 +34,21 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl md:ml-auto">
-
-              <div className="p-8 pt-12">
-                <video
-                  className="w-full rounded-lg"
-                  controls
-                  muted
-                  playsInline
-                  loop
-                  preload="metadata"
-                >
-                  <source src="/SmartFinDemo.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-
+            <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-2xl bg-white shadow-xl md:ml-auto">
+              <div className="absolute left-0 top-0 h-24 w-24 bg-gradient-to-br from-green-500 to-green-600"></div>
+              <div className="p-8">
+                <div className="mb-6 font-serif text-2xl font-medium">
+                  Demo
+                  <br />
+                  goes
+                  <br />
+                  here
+                </div>
+                <div className="space-y-4">
+                  <div className="h-12 rounded-lg bg-gray-100"></div>
+                  <div className="h-32 rounded-lg bg-gray-100"></div>
+                  <div className="h-12 rounded-lg bg-gray-100"></div>
+                </div>
                 <div className="mt-6 flex justify-end">
                   <button className="rounded-full bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700">
                     Try Demo
@@ -134,12 +131,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="relative overflow-hidden py-24">
-      <img
-        src="/image2.png"
-        alt="Background"
-        className="absolute inset-0 h-full w-full object-cover grayscale opacity-20"
-      />
+      <section className="bg-gray-50 py-16 md:py-24">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mx-auto mb-12 max-w-3xl text-center">
             <h2 className="font-serif text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">

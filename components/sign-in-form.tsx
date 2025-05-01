@@ -3,22 +3,45 @@
 import type React from "react"
 import Link from "next/link"
 import { useState } from "react"
+import { signIn } from "next-auth/react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Eye, EyeOff, ArrowRight } from "lucide-react"
 
 export default function SignInForm() {
-  const [username, setUsername] = useState("")
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get("callbackUrl") || "/"
+
+  const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
+    setError("")
+
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      })
+
+      if (result?.error) {
+        setError("Invalid email or password")
+        setIsLoading(false)
+        return
+      }
+
+      router.push(callbackUrl)
+      router.refresh()
+    } catch (error) {
+      setError("An error occurred. Please try again.")
       setIsLoading(false)
-      console.log({ username, password })
-    }, 1500)
+    }
   }
 
   return (
@@ -28,18 +51,20 @@ export default function SignInForm() {
         <p className="mt-2 text-sm text-gray-600">Sign in to access your SmartFin account</p>
       </div>
 
+      {error && <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-800">{error}</div>}
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="username" className="mb-2 block text-sm font-medium text-gray-700">
-            Username
+          <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
+            Email
           </label>
           <input
-            id="username"
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
-            placeholder="Enter your username"
+            placeholder="Enter your email"
             required
           />
         </div>
@@ -116,7 +141,10 @@ export default function SignInForm() {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <button className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+          <button
+            onClick={() => signIn("google", { callbackUrl })}
+            className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          >
             <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -137,7 +165,10 @@ export default function SignInForm() {
             </svg>
             Google
           </button>
-          <button className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+          <button
+            onClick={() => signIn("github", { callbackUrl })}
+            className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          >
             <svg className="mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fillRule="evenodd"

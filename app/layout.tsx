@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { GeistSans } from "geist/font/sans"
 import "./globals.css"
+import { SessionProvider } from "@/components/session-provider"
 import Navbar from "@/components/navbar"
 import Footer from "@/components/footer"
 
@@ -19,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className={GeistSans.className}>
-        <div className="flex min-h-screen flex-col">
-          <Navbar />
-          <div className="flex-1">{children}</div>
-          <Footer />
-        </div>
+        <SessionProvider>
+          <div className="flex min-h-screen flex-col">
+            <Navbar />
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </div>
+        </SessionProvider>
       </body>
     </html>
   )
