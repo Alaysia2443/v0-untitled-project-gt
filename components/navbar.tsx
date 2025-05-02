@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
@@ -35,9 +33,24 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-1 md:flex">
-          <NavLink href="/features">Features</NavLink>
-          <NavLink href="/shop">Shop</NavLink>
-          <NavLink href="/about">About</NavLink>
+          <Link
+            href="/features"
+            className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+          >
+            Features
+          </Link>
+          <Link
+            href="/shop"
+            className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+          >
+            Shop
+          </Link>
+          <Link
+            href="/about"
+            className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+          >
+            About
+          </Link>
 
           {session ? (
             <>
@@ -46,6 +59,8 @@ export default function Navbar() {
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center rounded-full border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                  aria-expanded={userMenuOpen}
+                  aria-haspopup="true"
                 >
                   <span className="mr-1">{session.user.name?.split(" ")[0] || "User"}</span>
                   <User className="h-4 w-4" />
@@ -98,6 +113,7 @@ export default function Navbar() {
           className="rounded-md p-2 text-gray-700 md:hidden"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
+          aria-expanded={mobileMenuOpen}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -105,85 +121,88 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="absolute left-0 right-0 top-16 z-50 bg-white px-4 py-5 shadow-lg md:hidden">
-          <nav className="flex flex-col space-y-4">
-            <MobileNavLink href="/features" onClick={() => setMobileMenuOpen(false)}>
-              Features
-            </MobileNavLink>
-            <MobileNavLink href="/shop" onClick={() => setMobileMenuOpen(false)}>
-              Shop
-            </MobileNavLink>
-            <MobileNavLink href="/about" onClick={() => setMobileMenuOpen(false)}>
-              About
-            </MobileNavLink>
+        <nav className="absolute left-0 right-0 top-16 z-50 bg-white px-4 py-5 shadow-lg md:hidden">
+          <ul className="flex flex-col space-y-4">
+            <li>
+              <Link
+                href="/features"
+                className="flex items-center rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Features
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/shop"
+                className="flex items-center rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Shop
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/about"
+                className="flex items-center rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                About
+              </Link>
+            </li>
 
             {session ? (
               <>
-                <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+                <li className="flex items-center justify-between border-t border-gray-100 pt-4">
                   <UserPointsDisplay />
-                </div>
-                <MobileNavLink href="/profile" onClick={() => setMobileMenuOpen(false)}>
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </MobileNavLink>
-                <MobileNavLink href="/purchases" onClick={() => setMobileMenuOpen(false)}>
-                  <ShoppingBag className="mr-2 h-4 w-4" />
-                  My Purchases
-                </MobileNavLink>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false)
-                    signOut({ callbackUrl: "/" })
-                  }}
-                  className="flex w-full items-center rounded-md px-4 py-2 text-left text-base font-medium text-gray-700 transition-colors hover:bg-gray-100"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
-                </button>
+                </li>
+                <li>
+                  <Link
+                    href="/profile"
+                    className="flex items-center rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/purchases"
+                    className="flex items-center rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <ShoppingBag className="mr-2 h-4 w-4" />
+                    My Purchases
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false)
+                      signOut({ callbackUrl: "/" })
+                    }}
+                    className="flex w-full items-center rounded-md px-4 py-2 text-left text-base font-medium text-gray-700 transition-colors hover:bg-gray-100"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign out
+                  </button>
+                </li>
               </>
             ) : (
-              <Link
-                href="/signin"
-                className="mt-2 rounded-full bg-green-600 px-5 py-2.5 text-center font-medium text-white transition-colors hover:bg-green-700"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Sign in
-              </Link>
+              <li>
+                <Link
+                  href="/signin"
+                  className="mt-2 block rounded-full bg-green-600 px-5 py-2.5 text-center font-medium text-white transition-colors hover:bg-green-700"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign in
+                </Link>
+              </li>
             )}
-          </nav>
-        </div>
+          </ul>
+        </nav>
       )}
     </header>
-  )
-}
-
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link
-      href={href}
-      className="rounded-md px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
-    >
-      {children}
-    </Link>
-  )
-}
-
-function MobileNavLink({
-  href,
-  onClick,
-  children,
-}: {
-  href: string
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center rounded-md px-4 py-2 text-base font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
-      onClick={onClick}
-    >
-      {children}
-    </Link>
   )
 }

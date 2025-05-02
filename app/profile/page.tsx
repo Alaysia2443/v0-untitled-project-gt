@@ -46,9 +46,9 @@ export default async function ProfilePage() {
 
       <div className="container mx-auto px-4 py-12 md:px-6">
         <div className="grid gap-8 md:grid-cols-3">
-          <div className="md:col-span-1">
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <div className="mb-6 flex flex-col items-center">
+          <aside className="md:col-span-1">
+            <section className="rounded-xl bg-white p-6 shadow-sm">
+              <header className="mb-6 flex flex-col items-center">
                 <div className="mb-4 h-24 w-24 overflow-hidden rounded-full bg-gray-200">
                   {user?.image ? (
                     <img
@@ -64,7 +64,7 @@ export default async function ProfilePage() {
                 </div>
                 <h2 className="text-xl font-bold">{user?.name}</h2>
                 <p className="text-sm text-gray-500">{user?.email}</p>
-              </div>
+              </header>
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between rounded-lg bg-gray-50 p-4">
@@ -93,12 +93,14 @@ export default async function ProfilePage() {
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
+            </section>
+          </aside>
 
-          <div className="md:col-span-2">
-            <div className="rounded-xl bg-white p-6 shadow-sm">
-              <h3 className="mb-6 text-xl font-bold">Recent Purchases</h3>
+          <section className="md:col-span-2">
+            <article className="rounded-xl bg-white p-6 shadow-sm">
+              <header className="mb-6">
+                <h3 className="text-xl font-bold">Recent Purchases</h3>
+              </header>
 
               {recentPurchases.length > 0 ? (
                 <div className="space-y-4">
@@ -158,10 +160,12 @@ export default async function ProfilePage() {
                   </a>
                 </div>
               )}
-            </div>
+            </article>
 
-            <div className="mt-8 rounded-xl bg-white p-6 shadow-sm">
-              <h3 className="mb-6 text-xl font-bold">Earn More Points</h3>
+            <article className="mt-8 rounded-xl bg-white p-6 shadow-sm">
+              <header className="mb-6">
+                <h3 className="text-xl font-bold">Earn More Points</h3>
+              </header>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-gray-200 p-4">
@@ -185,8 +189,8 @@ export default async function ProfilePage() {
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
+            </article>
+          </section>
         </div>
       </div>
     </main>

@@ -3,7 +3,16 @@ import type { NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ req: request })
+  // Skip middleware for API routes to prevent authentication issues
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.next()
+  }
+
+  const token = await getToken({
+    req: request,
+    secret: process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+  })
+
   const isAuthenticated = !!token
 
   // Protected routes that require authentication

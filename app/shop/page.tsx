@@ -34,11 +34,11 @@ export default async function ShopPage() {
       <PageHeader title="Shop" subtitle="Redeem your points for exclusive products and services" />
 
       <div className="container mx-auto px-4 py-12 md:px-6 md:py-16">
-        {!session ? (
-          <div className="mb-12 rounded-xl bg-gradient-to-r from-[#362a2a] to-[#4a3c3c] p-8 text-white md:p-12">
+        {!session && (
+          <section className="mb-12 rounded-xl bg-gradient-to-r from-[#362a2a] to-[#4a3c3c] p-8 text-white md:p-12">
             <div className="grid gap-8 md:grid-cols-2">
               <div>
-                <h2 className="mb-4 text-3xl font-bold md:text-4xl">Waah!</h2>
+                <h2 className="mb-4 text-3xl font-bold md:text-4xl">Sign In Required</h2>
                 <p className="mb-6 text-gray-200">
                   You'll need to sign in to access the shop as purchases are specific to the SmartFin Connect point
                   system. Earn points through daily activities and redeem them for exclusive products.
@@ -62,19 +62,19 @@ export default async function ShopPage() {
                 </div>
               </div>
             </div>
-          </div>
-        ) : null}
+          </section>
+        )}
 
-        <div className="mb-8 flex items-center justify-between">
+        <header className="mb-8 flex items-center justify-between">
           <h2 className="text-2xl font-bold">Shop Products</h2>
           <button className="flex items-center rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
             <Filter className="mr-2 h-4 w-4" />
             Filter
           </button>
-        </div>
+        </header>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
-          <div className="md:col-span-9">
+          <section className="md:col-span-9">
             <div className="space-y-12">
               <SectionCard title="Trending">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -120,23 +120,23 @@ export default async function ShopPage() {
                 </div>
               </SectionCard>
             </div>
-          </div>
+          </section>
 
-          <div className="md:col-span-3">
+          <aside className="md:col-span-3">
             <div className="sticky top-24 space-y-6">
-              {session ? (
-                <div className="rounded-xl bg-white p-6 shadow-sm">
+              {session && (
+                <section className="rounded-xl bg-white p-6 shadow-sm">
                   <h3 className="mb-4 text-lg font-medium">Your Cart</h3>
-                  <div className="mb-4 space-y-4">
-                    <div className="flex items-center justify-between">
+                  <ul className="mb-4 space-y-4">
+                    <li className="flex items-center justify-between">
                       <span className="text-sm">SmartFin Hoodie</span>
                       <span className="text-sm font-medium">1,800 pts</span>
-                    </div>
-                    <div className="flex items-center justify-between">
+                    </li>
+                    <li className="flex items-center justify-between">
                       <span className="text-sm">Wireless Earbuds</span>
                       <span className="text-sm font-medium">2,500 pts</span>
-                    </div>
-                  </div>
+                    </li>
+                  </ul>
                   <div className="mb-4 border-t border-gray-200 pt-4">
                     <div className="flex items-center justify-between font-medium">
                       <span>Total Points:</span>
@@ -151,10 +151,10 @@ export default async function ShopPage() {
                       View Receipt
                     </button>
                   </div>
-                </div>
-              ) : null}
+                </section>
+              )}
 
-              <div className="rounded-xl bg-gray-50 p-6">
+              <section className="rounded-xl bg-gray-50 p-6">
                 <h3 className="mb-4 text-lg font-medium">Get the App</h3>
                 <p className="mb-4 text-sm text-gray-600">
                   Download the SmartFin app to earn more points and shop on the go.
@@ -169,9 +169,9 @@ export default async function ShopPage() {
                     <span className="ml-1">App Store</span>
                   </button>
                 </div>
-              </div>
+              </section>
             </div>
-          </div>
+          </aside>
         </div>
       </div>
     </main>

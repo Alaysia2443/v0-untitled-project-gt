@@ -4,7 +4,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { Plus, ShoppingCart, Heart } from "lucide-react"
-import { motion } from "framer-motion"
 
 interface ProductCardProps {
   id?: string
@@ -21,8 +20,8 @@ export default function ProductCard({
 }: ProductCardProps) {
   const router = useRouter()
   const { data: session } = useSession()
-  const [isHovered, setIsHovered] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [error, setError] = useState("")
 
   const handleAddToCart = async () => {
     if (!session) {
@@ -33,6 +32,7 @@ export default function ProductCard({
     if (!id) return
 
     setIsAddingToCart(true)
+    setError("")
 
     try {
       const response = await fetch("/api/purchases", {
@@ -47,13 +47,15 @@ export default function ProductCard({
       })
 
       if (!response.ok) {
-        throw new Error("Failed to add to cart")
+        const data = await response.json()
+        throw new Error(data.error || "Failed to add to cart")
       }
 
       // Refresh the page to show updated points
       router.refresh()
     } catch (error) {
       console.error("Error adding to cart:", error)
+      setError(error.message)
     } finally {
       setIsAddingToCart(false)
     }
@@ -63,12 +65,7 @@ export default function ProductCard({
   const priceDisplay = typeof price === "number" ? `${price} points` : price
 
   return (
-    <motion.div
-      className="group relative overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-md"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ y: -5 }}
-    >
+    <article className="group relative overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-md">
       <div className="relative aspect-square overflow-hidden bg-gray-100">
         <img
           src={image || "/placeholder.svg"}
@@ -80,6 +77,7 @@ export default function ProductCard({
             className="rounded-full bg-green-600 p-2 text-white shadow-md transition-transform hover:bg-green-700 hover:scale-110"
             onClick={handleAddToCart}
             disabled={isAddingToCart}
+            aria-label="Add to cart"
           >
             {isAddingToCart ? (
               <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
@@ -102,7 +100,10 @@ export default function ProductCard({
               <Plus className="h-4 w-4" />
             )}
           </button>
-          <button className="rounded-full bg-white/90 p-2 text-gray-700 shadow-md backdrop-blur-sm transition-transform hover:bg-white hover:scale-110">
+          <button
+            className="rounded-full bg-white/90 p-2 text-gray-700 shadow-md backdrop-blur-sm transition-transform hover:bg-white hover:scale-110"
+            aria-label="Add to favorites"
+          >
             <Heart className="h-4 w-4" />
           </button>
         </div>
@@ -116,11 +117,13 @@ export default function ProductCard({
             className="rounded-full bg-gray-100 p-1.5 text-gray-700 transition-colors hover:bg-gray-200"
             onClick={handleAddToCart}
             disabled={isAddingToCart}
+            aria-label="Add to cart"
           >
             <ShoppingCart className="h-4 w-4" />
           </button>
         </div>
+        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
       </div>
-    </motion.div>
+    </article>
   )
 }

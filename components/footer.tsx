@@ -11,7 +11,7 @@ export default function Footer() {
               Financially empowering every student in America through education, tools, and community.
             </p>
           </div>
-          <div>
+          <nav>
             <h4 className="mb-4 text-sm font-medium uppercase tracking-wider">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
@@ -35,7 +35,7 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </nav>
           <div>
             <h4 className="mb-4 text-sm font-medium uppercase tracking-wider">Download App</h4>
             <div className="flex space-x-4">

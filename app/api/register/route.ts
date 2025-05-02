@@ -13,13 +13,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    if (password.length < 8) {
+      return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 })
+    }
+
     // Check if user already exists
     const existingUser = await db.query.users.findFirst({
       where: (users, { eq }) => eq(users.email, email),
     })
 
     if (existingUser) {
-      return NextResponse.json({ error: "User already exists" }, { status: 409 })
+      return NextResponse.json({ error: "Email already in use" }, { status: 409 })
     }
 
     // Hash password
@@ -28,35 +32,41 @@ export async function POST(request: Request) {
     // Create user with nanoid for ID
     const userId = nanoid()
 
-    // Insert user directly without returning to avoid potential issues
-    await db.insert(users).values({
-      id: userId,
-      name,
-      email,
-      password: hashedPassword,
-      points: 1000, // Starting points for new users
-      role: "user",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-
-    // Fetch the created user to return in response
-    const newUser = await db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.id, userId),
-      columns: {
-        id: true,
-        name: true,
-        email: true,
-        points: true,
-      },
-    })
+    // Insert user
+    try {
+      await db.insert(users).values({
+        id: userId,
+        name,
+        email,
+        password: hashedPassword,
+        points: 1000, // Starting points for new users
+        role: "user",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+    } catch (error) {
+      console.error("Error inserting user:", error)
+      return NextResponse.json(
+        {
+          error: "Database error during registration",
+          details: process.env.NODE_ENV === "development" ? error.message : undefined,
+        },
+        { status: 500 },
+      )
+    }
 
     return NextResponse.json({
-      user: newUser,
+      success: true,
       message: "User registered successfully",
     })
   } catch (error) {
     console.error("Registration error:", error)
-    return NextResponse.json({ error: "Failed to register user" }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: "Failed to register user",
+        details: process.env.NODE_ENV === "development" ? error.message : undefined,
+      },
+      { status: 500 },
+    )
   }
 }

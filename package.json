@@ -88,6 +88,7 @@
     "@neondatabase/serverless": "latest",
     "@cloudflare/workers-types": "latest",
     "@op-engineering/op-sqlite": "latest",
+    "prisma": "latest",
     "framer-motion": "latest",
     "next-auth": "latest",
     "drizzle-orm": "latest",

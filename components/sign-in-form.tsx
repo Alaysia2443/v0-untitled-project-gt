@@ -1,11 +1,10 @@
 "use client"
 
-import type React from "react"
-import Link from "next/link"
 import { useState } from "react"
+import Link from "next/link"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Eye, EyeOff, ArrowRight } from "lucide-react"
+import { Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react"
 
 export default function SignInForm() {
   const router = useRouter()
@@ -18,7 +17,7 @@ export default function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
@@ -39,17 +38,18 @@ export default function SignInForm() {
       router.push(callbackUrl)
       router.refresh()
     } catch (error) {
-      setError("An error occurred. Please try again.")
+      console.error("Sign in error:", error)
+      setError("An error occurred during sign in")
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="w-full max-w-md">
-      <div className="mb-8 text-center">
+    <section className="w-full max-w-md">
+      <header className="mb-8 text-center">
         <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
         <p className="mt-2 text-sm text-gray-600">Sign in to access your SmartFin account</p>
-      </div>
+      </header>
 
       {error && <div className="mb-6 rounded-lg bg-red-50 p-4 text-sm text-red-800">{error}</div>}
 
@@ -58,15 +58,20 @@ export default function SignInForm() {
           <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
             Email
           </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
-            placeholder="Enter your email"
-            required
-          />
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Mail className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-gray-900 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
         </div>
 
         <div>
@@ -79,12 +84,15 @@ export default function SignInForm() {
             </Link>
           </div>
           <div className="relative">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Lock className="h-5 w-5 text-gray-400" />
+            </div>
             <input
               id="password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 text-gray-900 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-3 pl-10 text-gray-900 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-200"
               placeholder="••••••••"
               required
             />
@@ -102,7 +110,7 @@ export default function SignInForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="relative flex w-full items-center justify-center rounded-lg bg-green-600 px-5 py-3 text-base font-medium text-white shadow-md transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-green-400"
+          className="flex w-full items-center justify-center rounded-lg bg-green-600 px-5 py-3 text-base font-medium text-white shadow-md transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:bg-green-400"
         >
           {isLoading ? (
             <>
@@ -142,6 +150,7 @@ export default function SignInForm() {
 
         <div className="mt-6 grid grid-cols-2 gap-3">
           <button
+            type="button"
             onClick={() => signIn("google", { callbackUrl })}
             className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
@@ -166,6 +175,7 @@ export default function SignInForm() {
             Google
           </button>
           <button
+            type="button"
             onClick={() => signIn("github", { callbackUrl })}
             className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
@@ -189,6 +199,19 @@ export default function SignInForm() {
           </Link>
         </p>
       </div>
-    </div>
+
+      {/* Test Account Info */}
+      <div className="mt-8 rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <h3 className="mb-2 text-sm font-medium text-gray-700">Test Account</h3>
+        <div className="font-mono text-xs text-gray-600">
+          <p>
+            <strong>Email:</strong> test@example.com
+          </p>
+          <p>
+            <strong>Password:</strong> password123
+          </p>
+        </div>
+      </div>
+    </section>
   )
 }

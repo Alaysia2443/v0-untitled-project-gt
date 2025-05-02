@@ -73,10 +73,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Insufficient points" }, { status: 400 })
     }
 
-    // Create purchase and update user points and product stock in a transaction
-    // Note: Drizzle doesn't have built-in transactions like Prisma, so we need to handle it differently
-
-    // 1. Create purchase
+    // Create purchase
     const newPurchase = await db
       .insert(purchases)
       .values({
@@ -85,38 +82,30 @@ export async function POST(request: Request) {
         quantity,
         pointsUsed: totalPoints,
       })
-      .returning({
-        id: purchases.id,
-        userId: purchases.userId,
-        productId: purchases.productId,
-        quantity: purchases.quantity,
-        pointsUsed: purchases.pointsUsed,
-        createdAt: purchases.createdAt,
-      })
+      .returning()
 
-    // 2. Update user points
+    // Update user points
     await db
       .update(users)
-      .set({ points: user.points - totalPoints })
+      .set({
+        points: user.points - totalPoints,
+        updatedAt: new Date(),
+      })
       .where(eq(users.id, user.id))
 
-    // 3. Update product stock
+    // Update product stock
     await db
       .update(products)
-      .set({ stock: product.stock - quantity })
+      .set({
+        stock: product.stock - quantity,
+        updatedAt: new Date(),
+      })
       .where(eq(products.id, product.id))
 
-    // Get the updated product for the response
-    const updatedProduct = await db.query.products.findFirst({
-      where: eq(products.id, product.id),
-    })
-
     return NextResponse.json({
-      purchase: {
-        ...newPurchase[0],
-        product: updatedProduct,
-      },
+      success: true,
       message: "Purchase successful",
+      purchase: newPurchase[0],
       remainingPoints: user.points - totalPoints,
     })
   } catch (error) {

@@ -1,25 +1,27 @@
-import { drizzle } from "drizzle-orm/postgres-js"
-import postgres from "postgres"
-import * as schema from "../database/schema"
-
 // This script will run during the build process to ensure the database schema is up to date
 async function main() {
   console.log("Connecting to database...")
 
-  const connectionString = process.env.DATABASE_URL as string
+  const connectionString = process.env.DATABASE_URL || process.env.LOCAL_DATABASE_URL
   if (!connectionString) {
-    console.error("DATABASE_URL environment variable is not set")
+    console.error("DATABASE_URL or LOCAL_DATABASE_URL environment variable is not set")
     process.exit(1)
   }
 
-  const client = postgres(connectionString)
-  const db = drizzle(client, { schema })
-
-  console.log("Running migrations...")
-
   try {
+    // Import postgres
+    const postgres = require("postgres")
+    const client = postgres(connectionString, {
+      max: 1,
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+      idle_timeout: 20,
+      connect_timeout: 10,
+    })
+
+    console.log("Running migrations...")
+
     // Generate schema
-    await db.execute(/* sql */ `
+    await client.unsafe(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
         name TEXT,
@@ -84,10 +86,10 @@ async function main() {
     `)
 
     console.log("Database schema created successfully")
+    await client.end()
   } catch (error) {
     console.error("Error creating database schema:", error)
-  } finally {
-    await client.end()
+    process.exit(1)
   }
 }
 
