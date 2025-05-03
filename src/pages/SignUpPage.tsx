@@ -4,134 +4,142 @@ import type React from "react"
 
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext"
-import PageHeader from "../components/PageHeader"
 
-export default function SignUpPage() {
-  const [name, setName] = useState("")
+interface SignUpPageProps {
+  onLogin: (email: string, password: string) => boolean
+}
+
+export default function SignUpPage({ onLogin }: SignUpPageProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const { signUp } = useAuth()
   const navigate = useNavigate()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError("")
 
-    // Validate passwords match
-    if (password !== confirmPassword) {
-      setError("Passwords do not match")
-      setIsLoading(false)
+    // Simple validation
+    if (!email || !password) {
+      setError("Please enter both email and password")
       return
     }
 
-    try {
-      const result = await signUp(email, password, name)
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
 
-      if (!result.success) {
-        setError(result.error || "Failed to create account")
-        setIsLoading(false)
-        return
-      }
+    const success = onLogin(email, password)
 
-      // Redirect to dashboard
+    if (success) {
       navigate("/dashboard")
-    } catch (error) {
-      console.error("Sign up error:", error)
-      setError("An unexpected error occurred")
-      setIsLoading(false)
+    } else {
+      setError("Failed to create account")
     }
   }
 
   return (
-    <main>
-      <PageHeader title="Sign Up" subtitle="Create your SmartFin account and start building your financial future" />
+    <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Create your account</h2>
+        </div>
 
-      <div className="container mx-auto px-4 py-12 md:px-6">
-        <div className="mx-auto max-w-md rounded-xl bg-white p-6 shadow-sm md:p-8">
-          <h2 className="text-2xl font-bold mb-6">Create Account</h2>
-
-          {error && <p className="bg-red-50 text-red-700 p-3 rounded-md mb-4 text-sm">{error}</p>}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-              />
+        {error && (
+          <div className="rounded-md bg-red-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-red-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">{error}</h3>
+              </div>
             </div>
+          </div>
+        )}
 
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+              <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
+                Email address
               </label>
               <input
-                id="email"
+                id="email-address"
+                name="email"
                 type="email"
+                autoComplete="email"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
             </div>
-
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
               <input
                 id="password"
+                name="password"
                 type="password"
+                autoComplete="new-password"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
-                minLength={8}
               />
             </div>
-
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700">
                 Confirm Password
               </label>
               <input
-                id="confirmPassword"
+                id="confirm-password"
+                name="confirm-password"
                 type="password"
+                autoComplete="new-password"
+                required
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
-                minLength={8}
               />
             </div>
+          </div>
 
+          <div>
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:bg-green-400"
+              className="group relative flex w-full justify-center rounded-md bg-green-600 py-2 px-3 text-sm font-semibold text-white hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             >
-              {isLoading ? "Creating account..." : "Create account"}
+              Sign up
             </button>
-          </form>
+          </div>
 
-          <p className="mt-4 text-sm text-gray-600 text-center">
-            Already have an account?{" "}
-            <Link to="/signin" className="text-green-600 hover:text-green-700">
-              Sign in
-            </Link>
-          </p>
-        </div>
+          <div className="text-center text-sm">
+            <p className="text-gray-600">
+              Already have an account?{" "}
+              <Link to="/signin" className="text-green-600 hover:text-green-700">
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </form>
       </div>
-    </main>
+    </div>
   )
 }

@@ -3,107 +3,119 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Link, useNavigate, useLocation } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext"
-import PageHeader from "../components/PageHeader"
+import { useNavigate } from "react-router-dom"
 
-export default function SignInPage() {
+interface SignInPageProps {
+  onLogin: (email: string, password: string) => boolean
+}
+
+export default function SignInPage({ onLogin }: SignInPageProps) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const { signIn } = useAuth()
   const navigate = useNavigate()
-  const location = useLocation()
 
-  // Get the redirect path from the location state or default to '/'
-  const from = location.state?.from?.pathname || "/"
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError("")
 
-    try {
-      const result = await signIn(email, password)
+    // Simple validation
+    if (!email || !password) {
+      setError("Please enter both email and password")
+      return
+    }
 
-      if (!result.success) {
-        setError(result.error || "Failed to sign in")
-        setIsLoading(false)
-        return
-      }
+    const success = onLogin(email, password)
 
-      // Redirect to the page they were trying to access or home
-      navigate(from, { replace: true })
-    } catch (error) {
-      console.error("Sign in error:", error)
-      setError("An unexpected error occurred")
-      setIsLoading(false)
+    if (success) {
+      navigate("/dashboard")
+    } else {
+      setError("Invalid email or password")
     }
   }
 
   return (
-    <main>
-      <PageHeader title="Sign In" subtitle="Access your SmartFin account to manage your finances" />
+    <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Sign in to your account</h2>
+        </div>
 
-      <div className="container mx-auto px-4 py-12 md:px-6">
-        <div className="mx-auto max-w-md rounded-xl bg-white p-6 shadow-sm md:p-8">
-          <h2 className="text-2xl font-bold mb-6">Sign In</h2>
+        {error && (
+          <div className="rounded-md bg-red-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-red-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">{error}</h3>
+              </div>
+            </div>
+          </div>
+        )}
 
-          {error && <p className="bg-red-50 text-red-700 p-3 rounded-md mb-4 text-sm">{error}</p>}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="-space-y-px rounded-md shadow-sm">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+              <label htmlFor="email-address" className="sr-only">
+                Email address
               </label>
               <input
-                id="email"
+                id="email-address"
+                name="email"
                 type="email"
+                autoComplete="email"
+                required
+                className="relative block w-full rounded-t-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-green-600"
+                placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
             </div>
-
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="password" className="sr-only">
                 Password
               </label>
               <input
                 id="password"
+                name="password"
                 type="password"
+                autoComplete="current-password"
+                required
+                className="relative block w-full rounded-b-md border-0 py-1.5 px-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-green-600"
+                placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md"
-                required
               />
             </div>
+          </div>
 
+          <div>
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 disabled:bg-green-400"
+              className="group relative flex w-full justify-center rounded-md bg-green-600 py-2 px-3 text-sm font-semibold text-white hover:bg-green-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              Sign in
             </button>
-          </form>
-
-          <p className="mt-4 text-sm text-gray-600 text-center">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-green-600 hover:text-green-700">
-              Sign up
-            </Link>
-          </p>
-
-          <div className="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-md">
-            <h3 className="text-sm font-medium mb-2">Test Account</h3>
-            <p className="text-xs">Email: test@example.com</p>
-            <p className="text-xs">Password: password123</p>
           </div>
-        </div>
+
+          <div className="text-center text-sm">
+            <p className="text-gray-600">For testing, use any email and password</p>
+          </div>
+        </form>
       </div>
-    </main>
+    </div>
   )
 }

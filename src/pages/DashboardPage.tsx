@@ -2,15 +2,28 @@
 
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext"
 import { useProducts } from "../contexts/ProductContext"
 import PageHeader from "../components/PageHeader"
 
+interface User {
+  email: string
+  name: string
+  points: number
+  createdAt?: string
+}
+
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const [user, setUser] = useState<User | null>(null)
   const { getUserPurchases, products } = useProducts()
   const [recentPurchases, setRecentPurchases] = useState([])
   const [purchaseCount, setPurchaseCount] = useState(0)
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [])
 
   useEffect(() => {
     if (user) {
@@ -35,7 +48,7 @@ export default function DashboardPage() {
   if (!user) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div>You need to be signed in to view this page.</div>
+        <div>Loading...</div>
       </div>
     )
   }
