@@ -88,7 +88,6 @@
     "@neondatabase/serverless": "latest",
     "@cloudflare/workers-types": "latest",
     "@op-engineering/op-sqlite": "latest",
-    "prisma": "latest",
     "framer-motion": "latest",
     "next-auth": "latest",
     "drizzle-orm": "latest",
@@ -96,7 +95,7 @@
     "drizzle-kit": "latest",
     "bcryptjs": "latest",
     "nanoid": "latest",
-    "@auth/drizzle-adapter": "latest"
+    "react-router-dom": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",

@@ -3,25 +3,21 @@ import type { NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 
 export async function middleware(request: NextRequest) {
-  // Skip middleware for API routes to prevent authentication issues
+  // Skip middleware for API routes
   if (request.nextUrl.pathname.startsWith("/api/")) {
     return NextResponse.next()
   }
 
   const token = await getToken({
     req: request,
-    secret: process.env.BETTER_AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET,
   })
 
   const isAuthenticated = !!token
 
   // Protected routes that require authentication
-  const protectedRoutes = ["/profile", "/purchases"]
+  const protectedRoutes = ["/shop", "/profile", "/purchases"]
   const isProtectedRoute = protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-
-  // Admin routes that require admin role
-  const adminRoutes = ["/admin"]
-  const isAdminRoute = adminRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
 
   // Check if user is trying to access a protected route without being authenticated
   if (isProtectedRoute && !isAuthenticated) {
@@ -30,19 +26,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl)
   }
 
-  // Check if user is trying to access an admin route without admin role
-  if (isAdminRoute && (!isAuthenticated || token?.role !== "admin")) {
-    return NextResponse.redirect(new URL("/", request.url))
-  }
-
-  // If user is authenticated and trying to access auth pages, redirect to home
-  if (isAuthenticated && (request.nextUrl.pathname === "/signin" || request.nextUrl.pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/", request.url))
-  }
-
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/purchases/:path*", "/admin/:path*", "/signin", "/signup"],
+  matcher: ["/shop/:path*", "/profile/:path*", "/purchases/:path*"],
 }

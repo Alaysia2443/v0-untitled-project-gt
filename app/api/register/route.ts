@@ -33,27 +33,16 @@ export async function POST(request: Request) {
     const userId = nanoid()
 
     // Insert user
-    try {
-      await db.insert(users).values({
-        id: userId,
-        name,
-        email,
-        password: hashedPassword,
-        points: 1000, // Starting points for new users
-        role: "user",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-    } catch (error) {
-      console.error("Error inserting user:", error)
-      return NextResponse.json(
-        {
-          error: "Database error during registration",
-          details: process.env.NODE_ENV === "development" ? error.message : undefined,
-        },
-        { status: 500 },
-      )
-    }
+    await db.insert(users).values({
+      id: userId,
+      name,
+      email,
+      password: hashedPassword,
+      points: 1000, // Starting points for new users
+      role: "user",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
 
     return NextResponse.json({
       success: true,
