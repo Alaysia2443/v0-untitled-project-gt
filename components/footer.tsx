@@ -4,16 +4,16 @@ import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
 export default function Footer() {
   return (
     <footer className="bg-header text-white">
-      <div className="container py-12">
-        <div className="grid grid-4">
+      <div className="container py-16">
+        <div className="grid grid-4 gap-8">
           <div>
-            <div className="mb-4">
-              <span className="text-lg font-medium">SmartFin</span>
+            <div className="mb-6">
+              <span className="text-xl font-medium">SmartFin</span>
             </div>
-            <p className="text-sm text-gray-300 mb-4">
+            <p className="text-sm text-gray-300 mb-6">
               Financially empowering every student in America through accessible tools and education.
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               <Link
                 href="#"
                 className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-colors"
@@ -47,7 +47,7 @@ export default function Footer() {
 
           <div>
             <h3 className="text-sm font-medium uppercase mb-4">Quick Links</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-sm">
               <li>
                 <Link href="/" className="text-gray-300 hover:text-primary transition-colors">
                   Home
@@ -73,7 +73,7 @@ export default function Footer() {
 
           <div>
             <h3 className="text-sm font-medium uppercase mb-4">Legal</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-sm">
               <li>
                 <Link href="#" className="text-gray-300 hover:text-primary transition-colors">
                   Terms of Service
@@ -94,7 +94,7 @@ export default function Footer() {
 
           <div>
             <h3 className="text-sm font-medium uppercase mb-4">Connect</h3>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-3 text-sm">
               <li className="text-gray-300">support@smartfin.com</li>
               <li className="text-gray-300">1-800-SMARTFIN</li>
               <li className="text-gray-300">123 Finance St, College Town, USA</li>

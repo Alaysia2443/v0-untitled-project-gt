@@ -12,29 +12,35 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100">
       <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center">
           <Link href="/" className="flex items-center">
-            <span className="text-lg font-medium">SmartFin</span>
+            <span className="text-xl font-medium tracking-tight">SmartFin</span>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/features" className="text-sm text-gray-600 hover:text-primary transition-colors">
+          <Link href="/features" className="text-sm font-normal text-gray-600 hover:text-primary transition-colors">
             Features
           </Link>
-          <Link href="/shop" className="text-sm text-gray-600 hover:text-primary transition-colors">
+          <Link href="/shop" className="text-sm font-normal text-gray-600 hover:text-primary transition-colors">
             Shop
           </Link>
-          <Link href="/about" className="text-sm text-gray-600 hover:text-primary transition-colors">
+          <Link href="/about" className="text-sm font-normal text-gray-600 hover:text-primary transition-colors">
             About
           </Link>
           {user ? (
-            <button onClick={logout} className="btn btn-primary text-sm">
+            <button
+              onClick={logout}
+              className="text-sm font-medium bg-primary hover:bg-primary-dark text-white rounded px-4 py-2 transition"
+            >
               Sign Out
             </button>
           ) : (
-            <Link href="/signin" className="btn btn-primary text-sm">
+            <Link
+              href="/signin"
+              className="text-sm font-medium bg-primary hover:bg-primary-dark text-white rounded px-4 py-2 transition"
+            >
               Sign In
             </Link>
           )}
@@ -52,21 +58,21 @@ export default function Navbar() {
           <nav className="container py-4 flex flex-col gap-4">
             <Link
               href="/features"
-              className="text-sm text-gray-600 hover:text-primary"
+              className="text-sm text-gray-600 hover:text-primary transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Features
             </Link>
             <Link
               href="/shop"
-              className="text-sm text-gray-600 hover:text-primary"
+              className="text-sm text-gray-600 hover:text-primary transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               Shop
             </Link>
             <Link
               href="/about"
-              className="text-sm text-gray-600 hover:text-primary"
+              className="text-sm text-gray-600 hover:text-primary transition-colors py-2"
               onClick={() => setMobileMenuOpen(false)}
             >
               About
@@ -77,14 +83,14 @@ export default function Navbar() {
                   logout()
                   setMobileMenuOpen(false)
                 }}
-                className="btn btn-primary text-sm w-full"
+                className="text-sm font-medium bg-primary hover:bg-primary-dark text-white rounded px-4 py-2 w-full transition"
               >
                 Sign Out
               </button>
             ) : (
               <Link
                 href="/signin"
-                className="btn btn-primary text-sm w-full text-center"
+                className="text-sm font-medium bg-primary hover:bg-primary-dark text-white rounded px-4 py-2 w-full text-center transition"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Sign In
