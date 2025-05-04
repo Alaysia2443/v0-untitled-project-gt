@@ -11,7 +11,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-100">
-      <div className="container flex h-16 items-center justify-between">
+      <section className="container flex h-16 items-center justify-between">
         <div className="flex items-center">
           <Link href="/" className="flex items-center">
             <span className="text-xl font-medium tracking-tight">SmartFin</span>
@@ -50,7 +50,7 @@ export default function Navbar() {
         <button className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Toggle menu">
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
-      </div>
+      </section>
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (

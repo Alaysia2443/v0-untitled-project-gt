@@ -132,15 +132,6 @@ export default function FeaturesPage() {
                 Download App
               </Link>
             </div>
-
-            <div className="flex justify-center mt-8 gap-6">
-              <div className="bg-black text-white px-6 py-3 rounded-lg flex items-center justify-center">
-                <span className="text-sm font-medium">App Store</span>
-              </div>
-              <div className="bg-black text-white px-6 py-3 rounded-lg flex items-center justify-center">
-                <span className="text-sm font-medium">Google Play</span>
-              </div>
-            </div>
           </div>
         </div>
       </section>
